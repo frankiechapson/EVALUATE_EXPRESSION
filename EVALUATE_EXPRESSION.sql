@@ -8,6 +8,7 @@ create or replace function EVALUATE_EXPRESSION( I_EXPRESSION in varchar2
     yyyy.mm.dd | Version | Author         | Changes
     -----------+---------+----------------+-------------------------
     2019.03.18 |  1.0    | Ferenc Toth    | Created 
+    2023.03.06 |  1.1    | Ferenc Toth    | return I_EXPRESSION; instead of null
 
 ************************************************************* */
 
@@ -31,13 +32,13 @@ begin
                 begin
                     execute immediate 'begin if ' || I_EXPRESSION || ' then :result := ''TRUE''; else :result := ''FALSE''; end if; end;' using out V_RESULT;
                 exception when others then
-                    null;
+                    return I_EXPRESSION;
                 end;
             end;
         end;
     end;
     rollback;
-    return nvl( V_RESULT, I_EXPRESSION );
+    return V_RESULT;
 end;
 /
 
